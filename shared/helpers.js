@@ -10,23 +10,25 @@ module.exports = function(Handlebars, getTemplate) {
 
   return {
     view: function(viewName, options) {
-      var ViewClass, html, viewOptions, view;
+      var ViewClass, html, viewOptions, view, app;
 
       if (!BaseView) {
         BaseView = require('rendr/shared/base/view');
       }
-      viewOptions = options.hash || {};
 
-      var app = getProperty('_app', this, options);
-      // Pass through a reference to the app.
+      viewOptions = options.hash || {};
+      app = getProperty('_app', this, options);
+
       if (app) {
-        viewOptions.app = app;
         viewName = app.modelUtils.underscorize(viewName);
       } else{
         throw new Error("An App instance is required when rendering a view, it could not be extracted from the options.")
       }
 
       if (isServer) {
+        // Pass through a reference to the app.
+        viewOptions.app = app
+
         // Pass through a reference to the parent view.
         var parentView = getProperty('_view', this, options);
         if (parentView) {
